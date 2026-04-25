@@ -21,8 +21,8 @@ export default function Navigation() {
           <Link 
             key={item.href} 
             href={item.href}
-            className={`text-[11px] uppercase tracking-[0.2em] font-sans transition-all hover:text-accent ${
-              pathname === item.href ? "text-accent font-semibold" : "text-white/40"
+            className={`text-[11px] uppercase tracking-[0.2em] font-sans transition-all hover:text-white ${
+              pathname === item.href ? "text-accent font-semibold" : "text-white/60"
             }`}
           >
             <FisheyeText>{item.label}</FisheyeText>
