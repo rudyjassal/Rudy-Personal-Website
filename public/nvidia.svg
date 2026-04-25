@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100">
+  <!-- Nvidia Horizontal Logo -->
+  <g transform="translate(10, 15)">
+    <!-- Eye Mark -->
+    <path fill="#76B900" d="M35 0 C 15 0 0 15 0 35 S 15 70 35 70 L 70 70 L 70 0 L 35 0 Z M 35 10 L 60 10 L 60 60 L 35 60 C 22 60 10 49 10 35 S 22 10 35 10 Z"/>
+    <path fill="#76B900" d="M35 20 C 27 20 20 27 20 35 S 27 50 35 50 L 50 50 L 50 20 L 35 20 Z"/>
+    
+    <!-- NVIDIA Text -->
+    <text x="85" y="58" font-family="'Inter Tight', sans-serif" font-size="60" font-weight="900" fill="white" style="letter-spacing: -3px;">NVIDIA</text>
+  </g>
+</svg>

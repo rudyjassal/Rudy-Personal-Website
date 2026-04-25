@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #000000;
+  --text-primary: #FFFFFF;
+  --text-body: #D4D4D4;
+  --text-muted: #A0A0A0;
+  --text-label: #666666;
+  --text-dash: #555555;
+  --accent: #FFFFFF;
+  --rule: #222222;
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-body);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 17px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+.site-content {
+  position: relative;
+  z-index: 1;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.section-label {
+  font-family: "Inter Tight", system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-label);
+  margin-bottom: 2rem;
+  margin-top: 2.5rem;
+}
+
+.dash-list { list-style: none; padding: 0; }
+.dash-list li {
+  position: relative;
+  padding-left: 1.4em;
+  margin-bottom: 0.5em;
+  color: var(--text-muted);
+}
+.dash-list li::before {
+  content: "–";
+  position: absolute;
+  left: 0;
+  color: var(--text-dash);
+}
+
+.hairline {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 3rem 0;
+}
+
+.fn-accordion { overflow: hidden; max-height: 0; transition: max-height 0.2s ease-out; opacity: 0; }
+.fn-accordion.expanded { max-height: 500px; opacity: 1; }
+
+/* Fixed nav that doesn't mess with alignment */
+.fixed-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 2rem;
+}
