@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 const API_KEY = process.env.LASTFM_API_KEY;
-const USERNAME = process.env.LASTFM_USERNAME;
+const USERNAME = process.env.LASTFM_USER || process.env.LASTFM_USERNAME;
 
 const LASTFM_STAR_HASH = "2a96cbd8b46e442fc41c2b86b821562f";
 
@@ -16,8 +16,8 @@ async function getAlbumArt(trackName: string, artistName: string, lastFmUrl: str
         // Return 600x600 artwork
         return data.results[0].artworkUrl100.replace("100x100bb", "600x600bb");
       }
-    } catch (e) {
-      console.error("iTunes fallback failed for:", trackName);
+    } catch {
+      // Ignore error
     }
   }
   return lastFmUrl || "https://via.placeholder.com/600?text=No+Cover";
@@ -42,17 +42,17 @@ export async function GET() {
     }
 
     const tracks = await Promise.all(
-      data.recenttracks.track.map(async (track: any) => ({
+      data.recenttracks.track.map(async (track: { mbid?: string; name: string; artist: { '#text'?: string; name?: string }; image: { '#text': string }[] }) => ({
         id: track.mbid || track.name + (track.artist['#text'] || track.artist.name),
         title: track.name,
         artist: track.artist['#text'] || track.artist.name,
-        albumArt: await getAlbumArt(track.name, (track.artist['#text'] || track.artist.name), track.image[3]["#text"]),
-        url: `https://open.spotify.com/search/${encodeURIComponent(`${track.name} ${(track.artist['#text'] || track.artist.name)}`)}`,
+        albumArt: await getAlbumArt(track.name, (track.artist['#text'] || track.artist.name || ""), track.image[3]["#text"]),
+        url: `https://open.spotify.com/search/${encodeURIComponent(`${track.name} ${(track.artist['#text'] || track.artist.name || "")}`)}`,
       }))
     );
 
     return NextResponse.json(tracks);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 500 });
   }
 }

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 export default function FisheyeCursor() {
   const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
   const [isVisible, setIsVisible] = useState(false);
-  const charDataRef = useRef<{ el: HTMLElement; cx: number; cy: number }[]>([]);
+  const charDataRef = useRef<{ el: HTMLElement; docX: number; docY: number }[]>([]);
   const rafIdRef = useRef<number>();
 
   useEffect(() => {

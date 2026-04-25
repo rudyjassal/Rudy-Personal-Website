@@ -26,7 +26,7 @@ const CATEGORIES = [
     items: [
       {
         title: "Prasad & Company LLP — Accounting Intern",
-        desc: "Interned at an accounting firm during tax season, the most junior person in the room by far. Everyone was racing to close files before CRA deadlines, but something about one client's investment portfolio didn't sit right with me. So instead of moving on, I pulled every broker statement and journal entry I could find and started cross-checking them line by line. I ended up uncovering over $500K in fraudulent transactions that the rest of the firm had missed, a hidden loophole that was artificially offsetting taxable losses. That was the first time I realized how fragile financial systems are when they're optimized for speed over accuracy."
+        desc: "Interned at an accounting firm during tax season, the most junior person in the room by far. Everyone was racing to close files before CRA deadlines, but something about one client's investment portfolio didn't sit right with me. So instead of moving on, I pulled every broker statement and journal entry I could find and started cross-checking them line by line. I ended up uncovering over $500K in fraudulent transactions that the rest of the firm had missed, a hidden loophole that was artificially offsetting taxable losses. That was the first time I realized how fragile financial systems are when they're optimized for speed over accuracy.".replace(/'/g, "&apos;")
       },
       {
         title: "Emanay Capital Advisors — Analyst Intern",
@@ -97,7 +97,7 @@ export default function ProjectsPage() {
             </span>
           </h1>
           <p className="text-muted font-sans tracking-wide uppercase text-sm">
-            A running log of things I've built, led, or shipped.
+            A running log of things I&apos;ve built, led, or shipped.
           </p>
         </header>
 

@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { footnotes, type Footnote } from "@/content/site";
+import { useState, useEffect, useCallback } from "react";
 import FisheyeText from "./FisheyeText";
+import { footnotes, type Footnote } from "@/content/site";
 
 /* ─────────────────────────────────────────────
-   Desktop slide-in panel
+   Slide-in panel (desktop)
    ───────────────────────────────────────────── */
 function Panel({
   footnote,
@@ -14,58 +14,57 @@ function Panel({
   footnote: Footnote | null;
   onClose: () => void;
 }) {
-  const panelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose]);
-
-  // Focus trap: keep focus inside the panel when open
-  useEffect(() => {
-    if (footnote && panelRef.current) {
-      panelRef.current.focus();
-    }
-  }, [footnote]);
-
   return (
     <>
       <div
         className={`panel-overlay ${footnote ? "open" : ""}`}
         onClick={onClose}
-        aria-hidden="true"
       />
-      <aside
-        ref={panelRef}
-        className={`panel ${footnote ? "open" : ""}`}
-        role="dialog"
-        aria-modal="true"
-        aria-label={footnote?.label ?? "Footnote"}
-        tabIndex={-1}
-      >
+      <div className={`panel ${footnote ? "open" : ""}`}>
         {footnote && (
-          <>
-            <button className="panel-close" onClick={onClose}>
-              Close ✕
+          <div className="animate-section">
+            <button
+              onClick={onClose}
+              className="text-[10px] uppercase tracking-widest text-muted hover:text-accent mb-12 flex items-center gap-2"
+            >
+              <span>←</span> Close
             </button>
-            <p className="panel-label">{footnote.label}</p>
-            <p className="panel-body">{footnote.body}</p>
+
+            <p
+              style={{
+                fontFamily: '"Inter Tight", system-ui, sans-serif',
+                fontSize: "11px",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.2em",
+                color: "#666",
+                marginBottom: "1rem",
+              }}
+            >
+              Footnote [{footnote.id}]
+            </p>
+
+            <h2 className="text-3xl font-serif text-white mb-6">
+              {footnote.label}
+            </h2>
+
+            <div className="text-body font-serif text-lg leading-relaxed mb-10 opacity-90">
+              {footnote.body}
+            </div>
+
             {footnote.link && (
               <a
-                className="panel-link"
                 href={footnote.link.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 py-3 px-6 rounded-full border border-white/10 hover:bg-white/5 transition-all text-sm uppercase tracking-widest text-accent"
               >
                 {footnote.link.text} ↗
               </a>
             )}
-          </>
+          </div>
         )}
-      </aside>
+      </div>
     </>
   );
 }
@@ -74,17 +73,11 @@ function Panel({
    Mobile inline accordion
    ───────────────────────────────────────────── */
 function MobileAccordion({ footnote }: { footnote: Footnote }) {
-  const [expanded, setExpanded] = useState(false);
-
   return (
     <span className="md:hidden">
       <span
-        className="fn-accordion"
-        style={
-          expanded
-            ? { maxHeight: "300px", opacity: 1 }
-            : { maxHeight: 0, opacity: 0 }
-        }
+        className="fn-accordion expanded"
+        style={{ maxHeight: "300px", opacity: 1 }}
       >
         <span className="fn-accordion-inner block">
           <strong
@@ -139,12 +132,12 @@ export default function Bio() {
     (id: number) => {
       const fn = footnotes.find((f) => f.id === id) ?? null;
       if (isMobile) {
-        setMobileExpanded(mobileExpanded === id ? null : id);
+        setMobileExpanded(prev => prev === id ? null : id);
       } else {
         setActiveFootnote(fn);
       }
     },
-    [isMobile, mobileExpanded]
+    [isMobile]
   );
 
   const closePanel = useCallback(() => setActiveFootnote(null), []);

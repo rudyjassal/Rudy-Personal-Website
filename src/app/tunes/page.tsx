@@ -31,7 +31,7 @@ export default function TunesPage() {
         if (!res.ok) throw new Error("API not configured");
         const data = await res.json();
         setTracks(data);
-      } catch (err) {
+      } catch {
         setTracks(MOCK_TRACKS);
       } finally {
         setLoading(false);
@@ -50,7 +50,7 @@ export default function TunesPage() {
             </span>
           </h1>
           <p className="text-muted font-sans tracking-wide uppercase text-sm">
-            What I've been listening to lately
+            What I&apos;ve been listening to lately
           </p>
         </header>
 
@@ -81,7 +81,7 @@ export default function TunesPage() {
           <div className="text-center py-24 border border-dashed border-panel-border rounded-xl">
             <p className="text-muted mb-4">No top tracks found for your account yet.</p>
             <p className="text-sm opacity-60 max-w-md mx-auto">
-              Make sure your Spotify or Apple Music is connected to Last.fm and that you've scrobbled some tracks recently!
+              Make sure your Spotify or Apple Music is connected to Last.fm and that you&apos;ve scrobbled some tracks recently!
             </p>
           </div>
         )}

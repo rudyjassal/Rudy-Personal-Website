@@ -7,7 +7,7 @@ export default function FisheyeText({ children }: { children: string }) {
     <span className="fisheye-container">
       {words.map((word, wordIndex) => (
         <span key={wordIndex} className="inline-block">
-          {[...word].map((char, i) => (
+          {word.split('').map((char, i) => (
             <span
               key={i}
               className="fisheye-char inline-block font-medium"
