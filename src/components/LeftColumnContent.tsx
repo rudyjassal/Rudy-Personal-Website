@@ -54,14 +54,24 @@ export default function LeftColumnContent() {
               href="https://phiner.ai/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 hover:opacity-70 transition-opacity"
+              className="inline-flex items-center gap-4 hover:opacity-70 transition-opacity"
             >
               <FisheyeText>Building</FisheyeText> 
-              <div className="inline-flex items-center gap-4">
-                <img src="/phiner.svg?v=2" alt="Phiner Logo" className="h-[24px] w-auto object-contain rounded-sm align-middle" />
-                <img src="/nvidia.svg" alt="NVIDIA Logo" className="h-[18px] w-auto object-contain align-middle" />
-                <img src="/residency.svg" alt="The Residency Logo" className="h-[24px] w-auto object-contain rounded-sm align-middle" />
-                <img src="/forumvc.svg" alt="Forum VC Logo" className="h-[24px] w-auto object-contain rounded-sm align-middle" />
+              <div className="flex items-center gap-5 ml-2">
+                <img src="/phiner.svg?v=2" alt="Phiner Logo" style={{ height: '22px', width: 'auto' }} className="object-contain align-middle" />
+                
+                {/* New NVIDIA Logo with cropping/scaling to handle the whitespace */}
+                <div className="h-[22px] w-[80px] relative overflow-hidden flex items-center justify-center bg-white rounded-sm px-1">
+                  <img 
+                    src="/nvidia_new.png" 
+                    alt="NVIDIA Logo" 
+                    style={{ height: '120%', width: 'auto', maxWidth: 'none' }} 
+                    className="object-contain" 
+                  />
+                </div>
+
+                <img src="/residency.svg" alt="The Residency Logo" style={{ height: '22px', width: 'auto' }} className="object-contain align-middle" />
+                <img src="/forumvc.svg" alt="Forum VC Logo" style={{ height: '22px', width: 'auto' }} className="object-contain align-middle" />
               </div>
             </a>
           </li>
