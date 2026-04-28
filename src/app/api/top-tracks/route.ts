@@ -65,7 +65,14 @@ export async function GET() {
       : [data.recenttracks.track];
 
     const tracks = await Promise.all(
-      rawTracks.map(async (track: any) => {
+      rawTracks.map(async (track: { 
+        name: string; 
+        artist: { '#text'?: string; name?: string }; 
+        image?: { '#text': string }[]; 
+        mbid?: string;
+        date?: { uts: string };
+        '@attr'?: { nowplaying?: string };
+      }) => {
         const artistName = track.artist?.['#text'] || track.artist?.name || "Unknown Artist";
         const trackName = track.name || "Unknown Track";
         

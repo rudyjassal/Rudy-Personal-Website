@@ -46,9 +46,7 @@ export default function TunesPage() {
         console.error("Error fetching tracks:", err);
         setError(err instanceof Error ? err.message : "An unknown error occurred");
         // Fallback to mock tracks only if we have nothing else
-        if (tracks.length === 0) {
-          setTracks(MOCK_TRACKS);
-        }
+        setTracks(prev => prev.length === 0 ? MOCK_TRACKS : prev);
       } finally {
         setLoading(false);
       }
@@ -58,7 +56,7 @@ export default function TunesPage() {
     // Refresh every 30 seconds to keep "Now Playing" updated
     const interval = setInterval(fetchTracks, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="min-h-screen bg-black text-white py-12 lg:py-24 px-6">
@@ -97,6 +95,7 @@ export default function TunesPage() {
                 track.nowPlaying ? "ring-2 ring-accent ring-offset-4 ring-offset-black" : ""
               }`}
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
                 src={track.albumArt} 
                 alt={track.title}
