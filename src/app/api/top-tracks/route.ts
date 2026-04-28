@@ -1,23 +1,33 @@
 import { NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic';
+
 const API_KEY = process.env.LASTFM_API_KEY;
-const USERNAME = process.env.LASTFM_USER || process.env.LASTFM_USERNAME;
+const USERNAME = process.env.LASTFM_USERNAME || process.env.LASTFM_USER;
 
 const LASTFM_STAR_HASH = "2a96cbd8b46e442fc41c2b86b821562f";
 
-async function getAlbumArt(trackName: string, artistName: string, lastFmUrl: string) {
+async function getAlbumArt(trackName: string, artistName: string, lastFmUrl?: string) {
   // If Last.fm gives us the placeholder star or nothing, use iTunes
-  if (!lastFmUrl || lastFmUrl.includes(LASTFM_STAR_HASH)) {
+  if (!lastFmUrl || lastFmUrl.includes(LASTFM_STAR_HASH) || lastFmUrl === "") {
     try {
       const itunesUrl = `https://itunes.apple.com/search?term=${encodeURIComponent(`${trackName} ${artistName}`)}&entity=song&limit=1`;
-      const res = await fetch(itunesUrl);
+      
+      // Add a timeout to iTunes fetch to prevent hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
+      
+      const res = await fetch(itunesUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      
       const data = await res.json();
       if (data.results && data.results[0]) {
         // Return 600x600 artwork
         return data.results[0].artworkUrl100.replace("100x100bb", "600x600bb");
       }
-    } catch {
-      // Ignore error
+    } catch (e) {
+      // Ignore error, fallback to Last.fm or placeholder
+      console.error("iTunes fetch failed for", trackName, e);
     }
   }
   return lastFmUrl || "https://via.placeholder.com/600?text=No+Cover";
@@ -26,33 +36,60 @@ async function getAlbumArt(trackName: string, artistName: string, lastFmUrl: str
 export async function GET() {
   try {
     if (!API_KEY || !USERNAME) {
+      console.error("Missing Last.fm credentials:", { API_KEY: !!API_KEY, USERNAME: !!USERNAME });
       return NextResponse.json({ error: "Missing Last.fm credentials" }, { status: 500 });
     }
 
-    // user.getrecenttracks is truly real-time (shows what you're listening to right NOW)
     const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${USERNAME}&api_key=${API_KEY}&format=json&limit=20`;
     
     const response = await fetch(url, { 
-      cache: 'no-store' // Disable caching for truly real-time updates
+      cache: 'no-store'
     });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Last.fm API error:", errorData);
+      return NextResponse.json({ error: "Last.fm API returned error" }, { status: 500 });
+    }
+
     const data = await response.json();
     
     if (data.error || !data.recenttracks?.track) {
+      console.error("Last.fm data error:", data);
       return NextResponse.json([]);
     }
 
+    // Handle case where track might be a single object instead of an array
+    const rawTracks = Array.isArray(data.recenttracks.track) 
+      ? data.recenttracks.track 
+      : [data.recenttracks.track];
+
     const tracks = await Promise.all(
-      data.recenttracks.track.map(async (track: { mbid?: string; name: string; artist: { '#text'?: string; name?: string }; image: { '#text': string }[] }) => ({
-        id: track.mbid || track.name + (track.artist['#text'] || track.artist.name),
-        title: track.name,
-        artist: track.artist['#text'] || track.artist.name,
-        albumArt: await getAlbumArt(track.name, (track.artist['#text'] || track.artist.name || ""), track.image[3]["#text"]),
-        url: `https://open.spotify.com/search/${encodeURIComponent(`${track.name} ${(track.artist['#text'] || track.artist.name || "")}`)}`,
-      }))
+      rawTracks.map(async (track: any) => {
+        const artistName = track.artist?.['#text'] || track.artist?.name || "Unknown Artist";
+        const trackName = track.name || "Unknown Track";
+        
+        // Safely get image URL
+        let lastFmArt = "";
+        if (track.image && Array.isArray(track.image)) {
+          // Try to get extralarge (3), then large (2), then medium (1)
+          lastFmArt = track.image[3]?.["#text"] || track.image[2]?.["#text"] || track.image[1]?.["#text"] || "";
+        }
+
+        return {
+          id: track.mbid || `${trackName}-${artistName}-${track.date?.uts || Date.now()}`,
+          title: trackName,
+          artist: artistName,
+          albumArt: await getAlbumArt(trackName, artistName, lastFmArt),
+          url: `https://open.spotify.com/search/${encodeURIComponent(`${trackName} ${artistName}`)}`,
+          nowPlaying: track['@attr']?.nowplaying === "true"
+        };
+      })
     );
 
     return NextResponse.json(tracks);
   } catch (error) {
+    console.error("Tunes API Route crash:", error);
     return NextResponse.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 500 });
   }
 }
