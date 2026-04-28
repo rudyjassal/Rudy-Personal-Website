@@ -2,9 +2,6 @@ import { NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
 
-const API_KEY = process.env.LASTFM_API_KEY;
-const USERNAME = process.env.LASTFM_USERNAME || process.env.LASTFM_USER;
-
 const LASTFM_STAR_HASH = "2a96cbd8b46e442fc41c2b86b821562f";
 
 async function getAlbumArt(trackName: string, artistName: string, lastFmUrl?: string) {
@@ -34,10 +31,19 @@ async function getAlbumArt(trackName: string, artistName: string, lastFmUrl?: st
 }
 
 export async function GET() {
+  const API_KEY = process.env.LASTFM_API_KEY;
+  const USERNAME = process.env.LASTFM_USERNAME || process.env.LASTFM_USER;
+
   try {
     if (!API_KEY || !USERNAME) {
-      console.error("Missing Last.fm credentials:", { API_KEY: !!API_KEY, USERNAME: !!USERNAME });
-      return NextResponse.json({ error: "Missing Last.fm credentials" }, { status: 500 });
+      const missing = [];
+      if (!API_KEY) missing.push("LASTFM_API_KEY");
+      if (!USERNAME) missing.push("LASTFM_USERNAME");
+      
+      console.error("Missing Last.fm credentials:", missing.join(", "));
+      return NextResponse.json({ 
+        error: `Missing: ${missing.join(", ")}. Please check your Vercel Environment Variables.` 
+      }, { status: 500 });
     }
 
     const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${USERNAME}&api_key=${API_KEY}&format=json&limit=20`;
