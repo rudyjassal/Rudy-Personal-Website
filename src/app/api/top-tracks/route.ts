@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -26,16 +26,13 @@ async function getAlbumArt(trackName: string, artistName: string, lastFmUrl: str
   return lastFmUrl || "https://via.placeholder.com/600?text=No+Cover";
 }
 
-export async function GET(): Promise<Response> {
+export async function GET(request: NextRequest): Promise<Response> {
   const API_KEY = process.env.LASTFM_API_KEY || process.env.LAST_FM_API_KEY;
   const USERNAME = process.env.LASTFM_USERNAME || process.env.LAST_FM_USERNAME || process.env.LASTFM_USER || process.env.LAST_FM_USER;
   
   if (!API_KEY || !USERNAME) {
-    const missing = [];
-    if (!API_KEY) missing.push("API_KEY");
-    if (!USERNAME) missing.push("USERNAME");
     return new Response(JSON.stringify({ 
-      error: `Missing in Vercel Production: ${missing.join(", ")}. Please check Settings > Environment Variables.` 
+      error: "Missing Last.fm credentials in Vercel Production environment." 
     }), { 
       status: 200,
       headers: { 'Content-Type': 'application/json' }
