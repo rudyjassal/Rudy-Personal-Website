@@ -33,8 +33,8 @@ async function getAlbumArt(trackName: string, artistName: string, lastFmUrl?: st
 }
 
 export async function GET() {
-  const API_KEY = process.env.LASTFM_API_KEY;
-  const USERNAME = process.env.LASTFM_USERNAME || process.env.LASTFM_USER;
+  const API_KEY = process.env.LASTFM_API_KEY || process.env.LAST_FM_API_KEY;
+  const USERNAME = process.env.LASTFM_USERNAME || process.env.LAST_FM_USERNAME || process.env.LASTFM_USER || process.env.LAST_FM_USER;
   
   console.log(`[Tunes API] Fetching for user: ${USERNAME}`);
 
