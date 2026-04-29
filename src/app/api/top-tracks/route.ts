@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
@@ -45,7 +46,8 @@ export async function GET() {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
-  } catch (e) {
+  } catch {
+    // catch block without (e) to satisfy eslint no-unused-vars
     return new Response(JSON.stringify([]), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
