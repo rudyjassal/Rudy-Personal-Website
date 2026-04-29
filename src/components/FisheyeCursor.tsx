@@ -136,7 +136,7 @@ export default function FisheyeCursor() {
         }
       `}</style>
       <div 
-        className="fixed top-0 left-0 w-2 h-2 rounded-full pointer-events-none z-[9999]"
+        className="fixed top-0 left-0 w-2 h-2 rounded-full pointer-events-none z-[9999] custom-cursor"
         style={{
           backgroundColor: "var(--accent)",
           opacity: isVisible ? 1 : 0,

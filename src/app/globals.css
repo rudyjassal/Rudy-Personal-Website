@@ -83,3 +83,31 @@ body {
 .animate-music-bar-1 { animation: music-bar 0.8s ease-in-out infinite; }
 .animate-music-bar-2 { animation: music-bar 1.2s ease-in-out infinite; }
 .animate-music-bar-3 { animation: music-bar 1.0s ease-in-out infinite; }
+
+/* ── Mobile Optimizations ────────────────────── */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px; /* Slightly smaller base font for mobile */
+  }
+  
+  .site-content {
+    padding: 0 1.25rem;
+    padding-top: 5rem; /* Space for fixed nav */
+  }
+
+  /* Restore system cursor on mobile since there is no mouse */
+  * {
+    cursor: auto !important;
+  }
+
+  /* Hide the custom dot cursor on mobile */
+  .custom-cursor {
+    display: none !important;
+  }
+  
+  /* Adjust section labels for tighter mobile view */
+  .section-label {
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+  }
+}
