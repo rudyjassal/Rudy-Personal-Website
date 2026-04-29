@@ -92,7 +92,7 @@ body {
   
   .site-content {
     padding: 0 1.25rem;
-    padding-top: 6rem; /* Increased space for fixed nav + pokemon */
+    padding-top: 8rem; /* Even more space for fixed nav + pokemon */
   }
 
   /* Restore system cursor on mobile since there is no mouse */
