@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 // Last Update: 2026-04-28 01:45 AM
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const LASTFM_STAR_HASH = "2a96cbd8b46e442fc41c2b86b821562f";
 
@@ -34,6 +35,8 @@ async function getAlbumArt(trackName: string, artistName: string, lastFmUrl?: st
 export async function GET() {
   const API_KEY = process.env.LASTFM_API_KEY;
   const USERNAME = process.env.LASTFM_USERNAME || process.env.LASTFM_USER;
+  
+  console.log(`[Tunes API] Fetching for user: ${USERNAME}`);
 
   try {
     if (!API_KEY || !USERNAME) {

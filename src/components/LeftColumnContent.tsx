@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Bio from "@/components/Bio";
 import Section from "@/components/Section";
 import DashList from "@/components/DashList";
@@ -60,12 +61,12 @@ export default function LeftColumnContent() {
               <div className="flex items-center gap-5 ml-2">
                 <img src="/phiner.svg?v=2" alt="Phiner Logo" style={{ height: '22px', width: 'auto' }} className="object-contain align-middle" />
                 
-                {/* Squared NVIDIA Logo to match Phiner size */}
-                <div className="h-[22px] w-[22px] relative overflow-hidden flex items-center justify-center bg-white rounded-sm">
+                {/* NVIDIA Logo: Wider to show text, but same height as others */}
+                <div className="h-[22px] w-[65px] relative overflow-hidden flex items-center justify-center bg-white rounded-sm px-1">
                   <img 
                     src="/nvidia_new.png" 
                     alt="NVIDIA Logo" 
-                    style={{ height: '220%', width: 'auto', maxWidth: 'none', transform: 'translateY(2%)' }} 
+                    style={{ height: '90%', width: 'auto' }} 
                     className="object-contain" 
                   />
                 </div>
