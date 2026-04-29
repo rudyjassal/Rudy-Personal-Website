@@ -58,11 +58,19 @@ export default function PokemonEngine() {
       
       if (target) {
         const rect = target.getBoundingClientRect();
-        let offset = 40;
-        if (pathname === "/life-story") offset = 100;
-        if (pathname === "/projects") offset = 80;
-        if (pathname === "/tunes") offset = 80;
-        setCharPos({ x: rect.right + offset, y: rect.top + rect.height / 2 });
+        const isMobile = window.innerWidth < 768;
+        
+        if (isMobile) {
+          // On mobile, float it above the text so it doesn't go off-screen
+          setCharPos({ x: rect.left + rect.width / 2, y: rect.top - 50 });
+        } else {
+          // On desktop, float it to the right
+          let offset = 40;
+          if (pathname === "/life-story") offset = 100;
+          if (pathname === "/projects") offset = 80;
+          if (pathname === "/tunes") offset = 80;
+          setCharPos({ x: rect.right + offset, y: rect.top + rect.height / 2 });
+        }
       } else if (charPos.x === -1) {
         setCharPos({ x: 700, y: 110 });
       }

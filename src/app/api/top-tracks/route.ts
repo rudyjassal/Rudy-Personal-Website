@@ -46,8 +46,8 @@ export async function GET() {
       
       console.error("Missing Last.fm credentials:", missing.join(", "));
       return NextResponse.json({ 
-        error: `Missing: ${missing.join(", ")}. Please check your Vercel Environment Variables.` 
-      }, { status: 500 });
+        error: "Music service is temporarily unavailable. Check credentials in Vercel." 
+      }, { status: 200 });
     }
 
     const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${USERNAME}&api_key=${API_KEY}&format=json&limit=20`;
