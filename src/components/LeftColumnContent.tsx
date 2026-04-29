@@ -60,12 +60,12 @@ export default function LeftColumnContent() {
               <div className="flex items-center gap-5 ml-2">
                 <img src="/phiner.svg?v=2" alt="Phiner Logo" style={{ height: '22px', width: 'auto' }} className="object-contain align-middle" />
                 
-                {/* New NVIDIA Logo with cropping/scaling to handle the whitespace */}
-                <div className="h-[22px] w-[80px] relative overflow-hidden flex items-center justify-center bg-white rounded-sm px-1">
+                {/* Squared NVIDIA Logo to match Phiner size */}
+                <div className="h-[22px] w-[22px] relative overflow-hidden flex items-center justify-center bg-white rounded-sm">
                   <img 
                     src="/nvidia_new.png" 
                     alt="NVIDIA Logo" 
-                    style={{ height: '120%', width: 'auto', maxWidth: 'none' }} 
+                    style={{ height: '220%', width: 'auto', maxWidth: 'none', transform: 'translateY(2%)' }} 
                     className="object-contain" 
                   />
                 </div>

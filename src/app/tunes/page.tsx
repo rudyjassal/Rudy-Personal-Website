@@ -30,7 +30,7 @@ export default function TunesPage() {
     async function fetchTracks() {
       try {
         setLoading(true);
-        const res = await fetch("/api/top-tracks");
+        const res = await fetch(`/api/top-tracks?t=${Date.now()}`);
         if (!res.ok) {
           const data = await res.json();
           throw new Error(data.error || "Failed to fetch tracks");
