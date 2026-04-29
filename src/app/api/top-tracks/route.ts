@@ -40,56 +40,37 @@ export async function GET() {
 
   try {
     if (!API_KEY || !USERNAME) {
-      const missing = [];
-      if (!API_KEY) missing.push("LASTFM_API_KEY");
-      if (!USERNAME) missing.push("LASTFM_USERNAME");
-      
-      console.error("Missing Last.fm credentials:", missing.join(", "));
-      return NextResponse.json({ 
+      console.error("Missing Last.fm credentials");
+      return Response.json({ 
         error: "Music service is temporarily unavailable. Check credentials in Vercel." 
       }, { status: 200 });
     }
 
     const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${USERNAME}&api_key=${API_KEY}&format=json&limit=20`;
     
-    const response = await fetch(url, { 
-      cache: 'no-store'
-    });
+    const response = await fetch(url, { cache: 'no-store' });
     
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Last.fm API error:", errorData);
-      return NextResponse.json({ error: "Last.fm API returned error" }, { status: 500 });
+      return Response.json({ error: "Last.fm API returned error" }, { status: 200 });
     }
 
     const data = await response.json();
     
     if (data.error || !data.recenttracks?.track) {
-      console.error("Last.fm data error:", data);
-      return NextResponse.json([]);
+      return Response.json([]);
     }
 
-    // Handle case where track might be a single object instead of an array
     const rawTracks = Array.isArray(data.recenttracks.track) 
       ? data.recenttracks.track 
       : [data.recenttracks.track];
 
     const tracks = await Promise.all(
-      rawTracks.map(async (track: { 
-        name: string; 
-        artist: { '#text'?: string; name?: string }; 
-        image?: { '#text': string }[]; 
-        mbid?: string;
-        date?: { uts: string };
-        '@attr'?: { nowplaying?: string };
-      }) => {
+      rawTracks.map(async (track: any) => {
         const artistName = track.artist?.['#text'] || track.artist?.name || "Unknown Artist";
         const trackName = track.name || "Unknown Track";
         
-        // Safely get image URL
         let lastFmArt = "";
         if (track.image && Array.isArray(track.image)) {
-          // Try to get extralarge (3), then large (2), then medium (1)
           lastFmArt = track.image[3]?.["#text"] || track.image[2]?.["#text"] || track.image[1]?.["#text"] || "";
         }
 
@@ -104,9 +85,9 @@ export async function GET() {
       })
     );
 
-    return NextResponse.json(tracks);
+    return Response.json(tracks);
   } catch (error) {
     console.error("Tunes API Route crash:", error);
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 500 });
+    return Response.json([], { status: 200 });
   }
 }
