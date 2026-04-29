@@ -77,10 +77,10 @@ export default function FisheyeCursor() {
             const scale = 1 + factor * 0.35;
             const translateY = -factor * 3;
 
-            el.style.transform = `scale(${scale}) translateY(${translateY}px)`;
+            el.style.transform = `translate3d(0, ${translateY}px, 0) scale(${scale})`;
             el.style.color = 'var(--accent)';
           } else if (el.style.transform !== '') {
-            el.style.transform = '';
+            el.style.transform = 'translate3d(0,0,0) scale(1)';
             el.style.color = '';
           }
         });
@@ -101,13 +101,20 @@ export default function FisheyeCursor() {
     };
 
     const onMouseLeave = () => setIsVisible(false);
-    const onTouchEnd = () => setIsVisible(false);
+    const onTouchEnd = () => {
+      setIsVisible(false);
+      // Clear transforms on touch end for smoothness
+      charDataRef.current.forEach(({ el }) => {
+        el.style.transform = 'translate3d(0,0,0) scale(1)';
+        el.style.color = '';
+      });
+    };
 
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('scroll', updateCharData, { passive: true });
-    window.addEventListener('touchstart', onTouchMove, { passive: false });
-    window.addEventListener('touchmove', onTouchMove, { passive: false });
-    window.addEventListener('touchend', onTouchEnd);
+    window.addEventListener('touchstart', onTouchMove, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
     document.documentElement.addEventListener('mouseleave', onMouseLeave);
     
     return () => {
