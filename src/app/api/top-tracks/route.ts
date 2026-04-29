@@ -1,18 +1,14 @@
 import { NextResponse } from "next/server";
-// Last Update: 2026-04-29 03:25 AM
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 const LASTFM_STAR_HASH = "2a96cbd8b46e442fc41c2b86b821562f";
 
-async function getAlbumArt(trackName: string, artistName: string, lastFmUrl?: string) {
-  // If Last.fm gives us the placeholder star or nothing, use iTunes
+async function getAlbumArt(trackName: string, artistName: string, lastFmUrl: string): Promise<string> {
   if (!lastFmUrl || lastFmUrl.includes(LASTFM_STAR_HASH) || lastFmUrl === "") {
     try {
       const itunesUrl = `https://itunes.apple.com/search?term=${encodeURIComponent(`${trackName} ${artistName}`)}&entity=song&limit=1`;
-      
-      // Add a timeout to iTunes fetch to prevent hanging
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 2000);
       
@@ -21,18 +17,16 @@ async function getAlbumArt(trackName: string, artistName: string, lastFmUrl?: st
       
       const data = await res.json();
       if (data.results && data.results[0]) {
-        // Return 600x600 artwork
         return data.results[0].artworkUrl100.replace("100x100bb", "600x600bb");
       }
     } catch (e) {
-      // Ignore error, fallback to Last.fm or placeholder
-      console.error("iTunes fetch failed for", trackName, e);
+      console.error("iTunes fetch failed:", e);
     }
   }
   return lastFmUrl || "https://via.placeholder.com/600?text=No+Cover";
 }
 
-export async function GET() {
+export async function GET(): Promise<Response> {
   const API_KEY = process.env.LASTFM_API_KEY || process.env.LAST_FM_API_KEY;
   const USERNAME = process.env.LASTFM_USERNAME || process.env.LAST_FM_USERNAME || process.env.LASTFM_USER || process.env.LAST_FM_USER;
   
@@ -40,29 +34,32 @@ export async function GET() {
     const missing = [];
     if (!API_KEY) missing.push("API_KEY");
     if (!USERNAME) missing.push("USERNAME");
-    return Response.json({ 
+    return new Response(JSON.stringify({ 
       error: `Missing in Vercel Production: ${missing.join(", ")}. Please check Settings > Environment Variables.` 
-    }, { status: 200 });
+    }), { 
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
-
-  console.log(`[Tunes API] Fetching for user: ${USERNAME}`);
 
   try {
     const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${USERNAME}&api_key=${API_KEY}&format=json&limit=20`;
-    
     const response = await fetch(url, { cache: 'no-store' });
     
     if (!response.ok) {
-      return Response.json({ error: "Last.fm API returned error" }, { status: 200 });
+      return new Response(JSON.stringify({ error: "Last.fm API returned error" }), { 
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
     const data = await response.json();
-    
     if (data.error || !data.recenttracks?.track) {
-      return Response.json([]);
+      return new Response(JSON.stringify([]), { 
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
-    // Handle case where track might be a single object instead of an array
     const rawTracks = Array.isArray(data.recenttracks.track) 
       ? data.recenttracks.track 
       : [data.recenttracks.track];
@@ -71,8 +68,6 @@ export async function GET() {
       rawTracks.map(async (track: any) => {
         const artistName = track.artist?.['#text'] || track.artist?.name || "Unknown Artist";
         const trackName = track.name || "Unknown Track";
-        
-        // Safely get image URL
         let lastFmArt = "";
         if (track.image && Array.isArray(track.image)) {
           lastFmArt = track.image[3]?.["#text"] || track.image[2]?.["#text"] || track.image[1]?.["#text"] || "";
@@ -89,9 +84,12 @@ export async function GET() {
       })
     );
 
-    return Response.json(tracks);
+    return new Response(JSON.stringify(tracks), { 
+      headers: { 'Content-Type': 'application/json' }
+    });
   } catch (error) {
-    console.error("Tunes API Route crash:", error);
-    return Response.json([], { status: 200 });
+    return new Response(JSON.stringify([]), { 
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }
