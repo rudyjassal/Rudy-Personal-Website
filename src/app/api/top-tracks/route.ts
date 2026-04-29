@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-// Last Update: 2026-04-28 01:45 AM
+// Last Update: 2026-04-29 03:25 AM
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -47,6 +47,7 @@ export async function GET() {
 
   console.log(`[Tunes API] Fetching for user: ${USERNAME}`);
 
+  try {
     const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${USERNAME}&api_key=${API_KEY}&format=json&limit=20`;
     
     const response = await fetch(url, { cache: 'no-store' });
@@ -61,6 +62,7 @@ export async function GET() {
       return Response.json([]);
     }
 
+    // Handle case where track might be a single object instead of an array
     const rawTracks = Array.isArray(data.recenttracks.track) 
       ? data.recenttracks.track 
       : [data.recenttracks.track];
@@ -70,6 +72,7 @@ export async function GET() {
         const artistName = track.artist?.['#text'] || track.artist?.name || "Unknown Artist";
         const trackName = track.name || "Unknown Track";
         
+        // Safely get image URL
         let lastFmArt = "";
         if (track.image && Array.isArray(track.image)) {
           lastFmArt = track.image[3]?.["#text"] || track.image[2]?.["#text"] || track.image[1]?.["#text"] || "";
