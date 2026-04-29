@@ -36,15 +36,16 @@ export async function GET() {
   const API_KEY = process.env.LASTFM_API_KEY || process.env.LAST_FM_API_KEY;
   const USERNAME = process.env.LASTFM_USERNAME || process.env.LAST_FM_USERNAME || process.env.LASTFM_USER || process.env.LAST_FM_USER;
   
-  console.log(`[Tunes API] Fetching for user: ${USERNAME}`);
+  if (!API_KEY || !USERNAME) {
+    const missing = [];
+    if (!API_KEY) missing.push("API_KEY");
+    if (!USERNAME) missing.push("USERNAME");
+    return Response.json({ 
+      error: `Missing in Vercel Production: ${missing.join(", ")}. Please check Settings > Environment Variables.` 
+    }, { status: 200 });
+  }
 
-  try {
-    if (!API_KEY || !USERNAME) {
-      console.error("Missing Last.fm credentials");
-      return Response.json({ 
-        error: "Music service is temporarily unavailable. Check credentials in Vercel." 
-      }, { status: 200 });
-    }
+  console.log(`[Tunes API] Fetching for user: ${USERNAME}`);
 
     const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${USERNAME}&api_key=${API_KEY}&format=json&limit=20`;
     
