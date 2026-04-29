@@ -55,10 +55,10 @@ export default function LeftColumnContent() {
               href="https://phiner.ai/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-4 hover:opacity-70 transition-opacity"
+              className="flex flex-col sm:flex-row sm:items-center gap-4 hover:opacity-70 transition-opacity"
             >
               <FisheyeText>Building</FisheyeText> 
-              <div className="flex items-center gap-5 ml-2">
+              <div className="flex items-center gap-4 sm:gap-5 ml-0 sm:ml-2 flex-wrap">
                 <img src="/phiner.svg?v=2" alt="Phiner Logo" style={{ height: '22px', width: 'auto' }} className="object-contain align-middle" />
                 
                 {/* Square NVIDIA Logo: Same size as Phiner, fitting everything inside */}
